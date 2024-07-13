@@ -10,14 +10,6 @@
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-ts-comment": [
-      "error",
-      {
-        "ts-expect-error": {
-          "descriptionFormat": "^.*$",
-          "minimumDescriptionLength": 0
-        }
-      }
-    ]
+    "@typescript-eslint/ban-ts-comment": "off"
   }
 }
