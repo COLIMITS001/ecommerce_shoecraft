@@ -39,7 +39,7 @@ const SinglePage = async ({ params }: { params: { slug: string } }) => {
               KES{product.price?.price}
             </h3>
             <h2 className="font-medium text-2xl">
-              KES{product.price?.discountedPrice}
+            KES{product.price?.discountedPrice}
             </h2>
           </div>
         )}

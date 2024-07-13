@@ -35,17 +35,17 @@ const NavIcons = () => {
 
   // const wixClient = useWixClient();
 
-  const login = async () => {
-    const loginRequestData = wixClient.auth.generateOAuthData(
-      "http://localhost:3000"
-    );
+  // const login = async () => {
+  //   const loginRequestData = wixClient.auth.generateOAuthData(
+  //     "http://localhost:3000"
+  //   );
 
-    console.log(loginRequestData);
+  //   console.log(loginRequestData);
 
-    localStorage.setItem("oAuthRedirectData", JSON.stringify(loginRequestData));
-    const { authUrl } = await wixClient.auth.getAuthUrl(loginRequestData);
-    window.location.href = authUrl;
-  };
+  //   localStorage.setItem("oAuthRedirectData", JSON.stringify(loginRequestData));
+  //   const { authUrl } = await wixClient.auth.getAuthUrl(loginRequestData);
+  //   window.location.href = authUrl;
+  // };
 
   const handleLogout = async () => {
     setIsLoading(true);
