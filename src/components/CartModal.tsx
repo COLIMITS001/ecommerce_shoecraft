@@ -8,7 +8,7 @@ import { currentCart } from "@wix/ecom";
 
 const CartModal = () => {
   // TEMPORARY
-  const cartItems = true;
+  // const cartItems = true;
 
   const wixClient = useWixClient();
   const { cart, isLoading, removeItem } = useCartStore();
@@ -35,12 +35,6 @@ const CartModal = () => {
     } catch (err) {
       console.log(err);
     }
-  };
-
-  // Function to calculate the subtotal manually
-  const calculateSubtotal = () => {
-    if (!cart.lineItems) return 0;
-    return cart.lineItems.reduce((total, item) => total + (item.price?.amount || 0) * (item.quantity || 1), 0);
   };
 
   return (
@@ -110,7 +104,8 @@ const CartModal = () => {
           <div className="">
             <div className="flex items-center justify-between font-semibold">
               <span className="">Subtotal</span>
-              <span className="">KES{calculateSubtotal()}</span>
+              {/* @ts-expect-error */}
+              <span className="">KES{cart.subtotal.amount}</span>
             </div>
             <p className="text-gray-500 text-sm mt-2 mb-4">
               Shipping and taxes calculated at checkout.
