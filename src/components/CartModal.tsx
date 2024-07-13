@@ -135,3 +135,4 @@ const CartModal = () => {
 };
 
 export default CartModal;
+git commit -m "Fix: Calculate subtotal manually in CartModal"
