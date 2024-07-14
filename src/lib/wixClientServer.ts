@@ -2,7 +2,7 @@ import { OAuthStrategy, createClient } from "@wix/sdk";
 import { collections, products } from "@wix/stores";
 import { orders } from "@wix/ecom";
 import { cookies } from "next/headers";
-import { members } from '@wix/members';
+import { members } from "@wix/members";
 
 export const wixClientServer = async () => {
   let refreshToken;
@@ -10,7 +10,9 @@ export const wixClientServer = async () => {
   try {
     const cookieStore = cookies();
     refreshToken = JSON.parse(cookieStore.get("refreshToken")?.value || "{}");
-  } catch (e) {}
+  } catch (e) {
+    // Handle error or leave a comment explaining why this block is empty
+  }
 
   const wixClient = createClient({
     modules: {
