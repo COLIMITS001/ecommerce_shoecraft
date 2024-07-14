@@ -60,37 +60,41 @@ const LoginPage = () => {
       let response;
 
       switch (mode) {
-        case MODE.LOGIN:
+        case MODE.LOGIN: {
           response = await wixClient.auth.login({
             email,
             password,
           });
           break;
-        case MODE.REGISTER:
+        }
+        case MODE.REGISTER: {
           response = await wixClient.auth.register({
             email,
             password,
             profile: { nickname: username },
           });
           break;
-        case MODE.RESET_PASSWORD:
+        }
+        case MODE.RESET_PASSWORD: {
           response = await wixClient.auth.sendPasswordResetEmail(
             email,
             window.location.href
           );
           setMessage("Password reset email sent. Please check your e-mail.");
           break;
-        case MODE.EMAIL_VERIFICATION:
+        }
+        case MODE.EMAIL_VERIFICATION: {
           response = await wixClient.auth.processVerification({
             verificationCode: emailCode,
           });
           break;
+        }
         default:
           break;
       }
 
       switch (response?.loginState) {
-        case LoginState.SUCCESS:
+        case LoginState.SUCCESS: {
           setMessage("Successful! You are being redirected.");
           const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
             response.data.sessionToken!
@@ -102,7 +106,8 @@ const LoginPage = () => {
           wixClient.auth.setTokens(tokens);
           router.push("/");
           break;
-        case LoginState.FAILURE:
+        }
+        case LoginState.FAILURE: {
           if (
             response.errorCode === "invalidEmail" ||
             response.errorCode === "invalidPassword"
@@ -115,13 +120,16 @@ const LoginPage = () => {
           } else {
             setError("Something went wrong!");
           }
-          break; // Added break
-        case LoginState.EMAIL_VERIFICATION_REQUIRED:
+          break;
+        }
+        case LoginState.EMAIL_VERIFICATION_REQUIRED: {
           setMode(MODE.EMAIL_VERIFICATION);
-          break; // Added break
-        case LoginState.OWNER_APPROVAL_REQUIRED:
+          break;
+        }
+        case LoginState.OWNER_APPROVAL_REQUIRED: {
           setMessage("Your account is pending approval");
-          break; // Added break
+          break;
+        }
         default:
           break;
       }
@@ -212,7 +220,7 @@ const LoginPage = () => {
             className="text-sm underline cursor-pointer"
             onClick={() => setMode(MODE.LOGIN)}
           >
-            Have and account?
+            Have an account?
           </div>
         )}
         {mode === MODE.RESET_PASSWORD && (
