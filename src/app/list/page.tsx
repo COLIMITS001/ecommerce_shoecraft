@@ -8,9 +8,16 @@ import { Suspense } from "react";
 const ListPage = async ({ searchParams }: { searchParams: any }) => {
   const wixClient = await wixClientServer();
 
-  const cat = await wixClient.collections.getCollectionBySlug(
-    searchParams.cat || "all-products"
-  );
+  let cat;
+  try {
+    cat = await wixClient.collections.getCollectionBySlug(
+      searchParams.cat || "all-products"
+    );
+  } catch (error) {
+    console.error("Failed to fetch category:", error);
+    // Handle error accordingly, e.g., set a default category or display an error message
+    cat = { collection: { _id: "00000000-000000-000000-000000000001", name: "All Products" } };
+  }
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative">
@@ -26,14 +33,14 @@ const ListPage = async ({ searchParams }: { searchParams: any }) => {
           </button>
         </div>
         <div className="relative w-1/3">
-          <Image src="/man.png" alt="" fill className="object-contain" />
+          <Image src="/man.png" alt="Promotional Image" fill className="object-contain" />
         </div>
       </div>
       {/* FILTER */}
       <Filter />
       {/* PRODUCTS */}
       <h1 className="mt-12 text-xl font-semibold">{cat?.collection?.name} For You!</h1>
-      <Suspense fallback={<Skeleton/>}>
+      <Suspense fallback={<Skeleton />}>
         <ProductList
           categoryId={
             cat.collection?._id || "00000000-000000-000000-000000000001"

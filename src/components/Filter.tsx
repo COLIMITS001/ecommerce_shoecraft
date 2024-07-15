@@ -5,15 +5,19 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 const Filter = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const router = useRouter();
 
   const handleFilterChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     const { name, value } = e.target;
     const params = new URLSearchParams(searchParams);
-    params.set(name, value);
-    replace(`${pathname}?${params.toString()}`);
+    if (value) {
+      params.set(name, value);
+    } else {
+      params.delete(name);
+    }
+    router.replace(`${pathname}?${params.toString()}`);
   };
 
   return (
@@ -21,54 +25,55 @@ const Filter = () => {
       <div className="flex gap-6 flex-wrap">
         <select
           name="type"
-          id=""
+          id="type"
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-[#EBEDED]"
           onChange={handleFilterChange}
         >
-          <option>Type</option>
+          <option value="">Type</option>
           <option value="physical">Physical</option>
           <option value="digital">Digital</option>
         </select>
         <input
           type="text"
           name="min"
-          placeholder="min price"
+          placeholder="Min price"
           className="text-xs rounded-2xl pl-2 w-24 ring-1 ring-gray-400"
           onChange={handleFilterChange}
         />
         <input
           type="text"
           name="max"
-          placeholder="max price"
+          placeholder="Max price"
           className="text-xs rounded-2xl pl-2 w-24 ring-1 ring-gray-400"
           onChange={handleFilterChange}
         />
-        {/* TODO: Filter Categories */}
         <select
           name="cat"
+          id="cat"
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-[#EBEDED]"
           onChange={handleFilterChange}
         >
-          <option>Category</option>
-          <option value="">New Arrival</option>
-          <option value="">Popular</option>
+          <option value="">Category</option>
+          <option value="new-arrival">New Arrival</option>
+          <option value="popular">Popular</option>
         </select>
         <select
-          name=""
-          id=""
+          name="filters"
+          id="filters"
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-[#EBEDED]"
         >
-          <option>All Filters</option>
+          <option value="">All Filters</option>
+          {/* Additional filters can be added here */}
         </select>
       </div>
-      <div className="">
+      <div>
         <select
           name="sort"
-          id=""
+          id="sort"
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-white ring-1 ring-gray-400"
           onChange={handleFilterChange}
         >
-          <option>Sort By</option>
+          <option value="">Sort By</option>
           <option value="asc price">Price (low to high)</option>
           <option value="desc price">Price (high to low)</option>
           <option value="asc lastUpdated">Newest</option>

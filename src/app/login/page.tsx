@@ -56,88 +56,80 @@ const LoginPage = () => {
     setIsLoading(true);
     setError("");
 
-    try {
-      let response;
+    let response; // Declare response outside the switch block
 
+    try {
       switch (mode) {
-        case MODE.LOGIN: {
+        case MODE.LOGIN:
           response = await wixClient.auth.login({
             email,
             password,
           });
           break;
-        }
-        case MODE.REGISTER: {
+        case MODE.REGISTER:
           response = await wixClient.auth.register({
             email,
             password,
             profile: { nickname: username },
           });
           break;
-        }
-        case MODE.RESET_PASSWORD: {
+        case MODE.RESET_PASSWORD:
           response = await wixClient.auth.sendPasswordResetEmail(
             email,
             window.location.href
           );
           setMessage("Password reset email sent. Please check your e-mail.");
           break;
-        }
-        case MODE.EMAIL_VERIFICATION: {
+        case MODE.EMAIL_VERIFICATION:
           response = await wixClient.auth.processVerification({
             verificationCode: emailCode,
           });
           break;
-        }
         default:
           break;
       }
 
       switch (response?.loginState) {
-        case LoginState.SUCCESS: {
+        case LoginState.SUCCESS:
           setMessage("Successful! You are being redirected.");
           const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
             response.data.sessionToken!
           );
-
           Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
             expires: 2,
           });
           wixClient.auth.setTokens(tokens);
           router.push("/");
           break;
-        }
-        case LoginState.FAILURE: {
-          if (
-            response.errorCode === "invalidEmail" ||
-            response.errorCode === "invalidPassword"
-          ) {
-            setError("Invalid email or password!");
-          } else if (response.errorCode === "emailAlreadyExists") {
-            setError("Email already exists!");
-          } else if (response.errorCode === "resetPassword") {
-            setError("You need to reset your password!");
-          } else {
-            setError("Something went wrong!");
-          }
+        case LoginState.FAILURE:
+          handleFailure(response.errorCode);
           break;
-        }
-        case LoginState.EMAIL_VERIFICATION_REQUIRED: {
+        case LoginState.EMAIL_VERIFICATION_REQUIRED:
           setMode(MODE.EMAIL_VERIFICATION);
           break;
-        }
-        case LoginState.OWNER_APPROVAL_REQUIRED: {
+        case LoginState.OWNER_APPROVAL_REQUIRED:
           setMessage("Your account is pending approval");
           break;
-        }
         default:
           break;
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setError("Something went wrong!");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFailure = (errorCode: string | undefined) => {
+    if (errorCode === "invalidEmail" || errorCode === "invalidPassword") {
+      setError("Invalid email or password!");
+    } else if (errorCode === "emailAlreadyExists") {
+      setError("Email already exists!");
+    } else if (errorCode === "resetPassword") {
+      setError("You need to reset your password!");
+    } else {
+      setError("Something went wrong!");
     }
   };
 
@@ -145,7 +137,7 @@ const LoginPage = () => {
     <div className="h-[calc(100vh-80px)] px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex items-center justify-center">
       <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
         <h1 className="text-2xl font-semibold">{formTitle}</h1>
-        {mode === MODE.REGISTER ? (
+        {mode === MODE.REGISTER && (
           <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-700">Username</label>
             <input
@@ -153,11 +145,12 @@ const LoginPage = () => {
               name="username"
               placeholder="john"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
-        ) : null}
-        {mode !== MODE.EMAIL_VERIFICATION ? (
+        )}
+        {mode !== MODE.EMAIL_VERIFICATION && (
           <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-700">E-mail</label>
             <input
@@ -165,10 +158,12 @@ const LoginPage = () => {
               name="email"
               placeholder="john@gmail.com"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-        ) : (
+        )}
+        {mode === MODE.EMAIL_VERIFICATION && (
           <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-700">Verification Code</label>
             <input
@@ -176,11 +171,12 @@ const LoginPage = () => {
               name="emailCode"
               placeholder="Code"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              value={emailCode}
               onChange={(e) => setEmailCode(e.target.value)}
             />
           </div>
         )}
-        {mode === MODE.LOGIN || mode === MODE.REGISTER ? (
+        {(mode === MODE.LOGIN || mode === MODE.REGISTER) && (
           <div className="flex flex-col gap-2">
             <label className="text-sm text-gray-700">Password</label>
             <input
@@ -188,10 +184,11 @@ const LoginPage = () => {
               name="password"
               placeholder="Enter your password"
               className="ring-2 ring-gray-300 rounded-md p-4"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-        ) : null}
+        )}
         {mode === MODE.LOGIN && (
           <div
             className="text-sm underline cursor-pointer"

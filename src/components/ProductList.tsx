@@ -9,7 +9,7 @@ const PRODUCT_PER_PAGE = 8;
 
 const ProductList = async ({
   categoryId,
-  limit,
+  limit = PRODUCT_PER_PAGE,
   searchParams,
 }: {
   categoryId: string;
@@ -28,26 +28,22 @@ const ProductList = async ({
     )
     .gt("priceData.price", searchParams?.min || 0)
     .lt("priceData.price", searchParams?.max || 999999)
-    .limit(limit || PRODUCT_PER_PAGE)
+    .limit(limit)
     .skip(
       searchParams?.page
-        ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE)
+        ? parseInt(searchParams.page) * limit
         : 0
     );
-  // .find();
 
   if (searchParams?.sort) {
     const [sortType, sortBy] = searchParams.sort.split(" ");
-
-    if (sortType === "asc") {
-      productQuery.ascending(sortBy);
-    }
-    if (sortType === "desc") {
-      productQuery.descending(sortBy);
-    }
+    if (sortType === "asc") productQuery.ascending(sortBy);
+    if (sortType === "desc") productQuery.descending(sortBy);
   }
 
   const res = await productQuery.find();
+
+  const currentPage = res.currentPage ?? 0; // Ensure currentPage is a number
 
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
@@ -63,7 +59,7 @@ const ProductList = async ({
               alt=""
               fill
               sizes="25vw"
-              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500"
+              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity ease duration-500"
             />
             {product.media?.items && (
               <Image
@@ -98,7 +94,7 @@ const ProductList = async ({
       ))}
       {searchParams?.cat || searchParams?.name ? (
         <Pagination
-          currentPage={res.currentPage || 0}
+          currentPage={currentPage}
           hasPrev={res.hasPrev()}
           hasNext={res.hasNext()}
         />
